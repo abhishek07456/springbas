@@ -25,31 +25,36 @@ public class database {
 	     	      
 	         }
   	  public  List <usermodel> senduser(){
-	         MongoCollection <Document> collection = database.getCollection("userlist"); 
-   		     List <usermodel> ul=new ArrayList <>();
-             FindIterable <Document> document=collection.find();
-             
-             for(Document obj:document)
-             {
-            	String s=obj.getString("name");
-            	int id=obj.getInteger("id");
-            	int cid=obj.getInteger("collegeid");
-            	usermodel user=new usermodel(id,s,cid);
-            	ul.add(user);
-
-             }
-                
+		         MongoCollection <Document> collection = database.getCollection("userlist"); 
+	   		     List <usermodel> ul=new ArrayList <>();
+	             FindIterable <Document> document=collection.find();
+	             
+	             for(Document obj:document)
+	             {
+	            	String s=obj.getString("name");
+	            	int id=obj.getInteger("id");
+	            	int cid=obj.getInteger("collegeid");
+	            	usermodel user=new usermodel(id,s,cid);
+	            	ul.add(user);
+	
+	             }
+	                
               return ul;
  	   }
 	 
-	public  String adduser(){
-		       MongoCollection<Document> collection = database.getCollection("userlist"); 
-		       Document document = new Document("id", 1) 
-		    	      .append("name", "abhishek")
-		    	      .append("collegeid", 31);
-		        collection.insertOne(document); 
-                return "inserted succesfully";
- 	 	   }
+	public   List <usermodel> addUser(usermodel obj){
+		     List <usermodel> ul=new ArrayList <>();
+                   usermodel user=new usermodel(obj.getId(),obj.getName(),obj.getCollegeid());
+                   ul.add(user);
+			        MongoCollection<Document> collection = database.getCollection("userlist"); 
+			        Document document = new Document("id", obj.getId()) 
+			    	      .append("name", obj.getName())
+			    	      .append("collegeid", obj.getCollegeid());
+			        collection.insertOne(document); 
+			        return ul;
+  	 	   }
+	
+	
   	   public List <usermodel> specficUser(int collid)
   	   {
            System.out.println(collid);  
@@ -71,9 +76,28 @@ public class database {
          }
             
           return ul;
-  		 
-  		 
+  	  
   	   }
+  	   
+  	   public List <usermodel> updateUser(int collid,usermodel obj)
+  	   {
+  		 List <usermodel> ul=new ArrayList <>();
+         usermodel user=new usermodel(obj.getId(),obj.getName(),obj.getCollegeid());
+         ul.add(user);
+  		 Document set=new Document();
+  		 set.append("collegeid",collid);
+  		Document document = new Document("id", obj.getId()) 
+	    	      .append("name", obj.getName())
+	    	      .append("collegeid", obj.getCollegeid());
+  		 Document update=new Document("$set",document);
+         
+  		 MongoCollection <Document> collection = database.getCollection("userlist"); 
+  		 collection.updateOne(set,update);
+  	     return ul;
+	     
+         
+  	   }
+	 
 	
 
 }
